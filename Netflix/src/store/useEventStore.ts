@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware"; 
+import { persist } from "zustand/middleware";
 
 interface Event {
   id: number;
@@ -10,16 +10,26 @@ interface Event {
 }
 
 interface EventState {
+
   events: Event[];
+
+  setEvents: (events: Event[]) => void;
   addEvent: (event: Event) => void;
   removeEvent: (id: number) => void;
+
 }
 
 export const useEventStore =
-  create<EventState>()( 
-    persist( 
+  create<EventState>()(
+    persist(
       (set) => ({
+
         events: [],
+
+        setEvents: (events) =>
+          set({
+            events,
+          }),
 
         addEvent: (event) =>
           set((state) => ({
@@ -36,9 +46,10 @@ export const useEventStore =
                 (event) => event.id !== id
               ),
           })),
+
       }),
       {
-        name: "event-storage", 
+        name: "event-storage",
       }
     )
   );

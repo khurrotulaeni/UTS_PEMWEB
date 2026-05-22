@@ -9,16 +9,30 @@ interface Movie {
 }
 
 interface MovieState {
+
   movies: Movie[];
+
+  // TAMBAHAN
+  setMovies: (movies: Movie[]) => void;
+
   addMovie: (movie: Movie) => void;
+
   removeMovie: (id: number) => void;
+
 }
 
 export const useMovieStore =
-  create<MovieState>()( 
-    persist( 
+  create<MovieState>()(
+    persist(
       (set) => ({
+
         movies: [],
+
+        // TAMBAHAN
+        setMovies: (movies) =>
+          set({
+            movies,
+          }),
 
         addMovie: (movie) =>
           set((state) => ({
@@ -35,9 +49,10 @@ export const useMovieStore =
                 (movie) => movie.id !== id
               ),
           })),
+
       }),
       {
-        name: "movie-storage", // 3. Tambah nama pengunci data di paling bawah
+        name: "movie-storage",
       }
     )
   );

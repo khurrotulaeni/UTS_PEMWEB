@@ -18,6 +18,7 @@ import DashboardLayout from "./layouts/DashboardLayout";
 import CategoryCreate from "./pages/dashboard/category/CategoryCreate";
 import FilmIndex from "./pages/dashboard/filmnetflix/FilmIndex";
 import FilmCreate from "./pages/dashboard/filmnetflix/FilmCreate";
+import FilmEdit from "./pages/dashboard/filmnetflix/FillmEdit";
 import CategoryIndex from "./pages/dashboard/category/CategoryIndex";
 import EventIndex from "./pages/dashboard/event/EventIndex";
 import EventCreate from "./pages/dashboard/event/EventCreate";
@@ -74,6 +75,10 @@ function App() {
             element={<FilmCreate />}
           />
 
+          <Route
+          path="/dashboard/filmnetflix/edit/:id"
+          element={<FilmEdit />}
+        />
           <Route
             path="/dashboard/event"
             element={<EventIndex />}

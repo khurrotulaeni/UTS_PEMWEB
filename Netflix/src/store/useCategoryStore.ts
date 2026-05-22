@@ -1,36 +1,54 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware"; 
+import { persist } from "zustand/middleware";
+
+interface Category {
+  id: number;
+  name: string;
+}
 
 interface CategoryState {
-  categories: string[];
-  addCategory: (name: string) => void;
-  removeCategory: (name: string) => void;
+
+  categories: Category[];
+
+  setCategories: (data: Category[]) => void;
+
+  addCategory: (category: Category) => void;
+
+  removeCategory: (id: number) => void;
+
 }
 
 export const useCategoryStore =
-  create<CategoryState>()( 
-    persist( 
+  create<CategoryState>()(
+    persist(
       (set) => ({
+
         categories: [],
 
-        addCategory: (name) =>
+        setCategories: (data) =>
+          set({
+            categories: data,
+          }),
+
+        addCategory: (category) =>
           set((state) => ({
             categories: [
               ...state.categories,
-              name, 
+              category,
             ],
           })),
 
-        removeCategory: (name) =>
+        removeCategory: (id) =>
           set((state) => ({
             categories:
               state.categories.filter(
-                (cat) => cat !== name
+                (cat) => cat.id !== id
               ),
           })),
+
       }),
       {
-        name: "category-storage", 
+        name: "category-storage",
       }
     )
   );

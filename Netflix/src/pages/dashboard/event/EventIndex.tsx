@@ -12,25 +12,82 @@ export interface Event {
 }
 
 export default function EventIndex() {
+
   const [events, setEvents] = useState<Event[]>([]);
 
-  const removeEvent = useEventStore((state) => state.removeEvent);
+  const removeEvent = useEventStore(
+    (state) => state.removeEvent
+  );
 
+  // FETCH DATA DARI BACKEND
   useEffect(() => {
-    const savedEvents = localStorage.getItem("events");
-    if (savedEvents) {
-      setEvents(JSON.parse(savedEvents));
-    }
+
+    const fetchEvents = async () => {
+
+      try {
+
+        const response = await fetch(
+          "http://localhost:3000/events"
+        );
+
+        const data = await response.json();
+
+        setEvents(data);
+
+      } catch (error) {
+
+        console.log(
+          "Gagal fetch event",
+          error
+        );
+
+      }
+
+    };
+
+    fetchEvents();
+
   }, []);
 
-  const handleDelete = (id: number) => {
-    if (confirm("Yakin ingin menghapus event ini?")) {
-      const updatedEvents = events.filter((event) => event.id !== id);
-      setEvents(updatedEvents);
-      localStorage.setItem("events", JSON.stringify(updatedEvents));
-      
-      removeEvent(id); 
+  const handleDelete = async (id: number) => {
+
+    if (
+      confirm(
+        "Yakin ingin menghapus event ini?"
+      )
+    ) {
+
+      try {
+
+        // DELETE KE BACKEND
+        await fetch(
+          `http://localhost:3000/events/${id}`,
+          {
+            method: "DELETE",
+          }
+        );
+
+        // UPDATE UI
+        const updatedEvents =
+          events.filter(
+            (event) => event.id !== id
+          );
+
+        setEvents(updatedEvents);
+
+        removeEvent(id);
+
+      } catch (error) {
+
+        console.log(
+          "Gagal hapus event",
+          error
+        );
+
+      }
+
     }
+
   };
 
   return (
@@ -53,41 +110,55 @@ export default function EventIndex() {
 
       <div className="space-y-4">
 
-        {events.map((event) => (
+        {events.length > 0 ? (
 
-          <div
-            key={event.id}
-            className="bg-zinc-900 p-5 rounded-lg flex justify-between items-center" // Tetap pakai susunan layout Princess
-          >
+          events.map((event) => (
 
-            <div>
-              <h2 className="text-xl font-semibold mb-2">
-                {event.name}
-              </h2>
+            <div
+              key={event.id}
+              className="bg-zinc-900 p-5 rounded-lg flex justify-between items-center"
+            >
 
-              <p className="text-sm text-gray-400">
-                {event.date}
-              </p>
+              <div>
 
-              <p className="text-sm text-gray-400 mb-2">
-                {event.location}
-              </p>
+                <h2 className="text-xl font-semibold mb-2">
+                  {event.name}
+                </h2>
 
-              <p className="text-gray-300">
-                {event.description}
-              </p>
+                <p className="text-sm text-gray-400">
+                  {event.date}
+                </p>
+
+                <p className="text-sm text-gray-400 mb-2">
+                  {event.location}
+                </p>
+
+                <p className="text-gray-300">
+                  {event.description}
+                </p>
+
+              </div>
+
+              <button
+                onClick={() =>
+                  handleDelete(event.id)
+                }
+                className="bg-red-600 px-4 py-1.5 rounded hover:bg-red-700 transition"
+              >
+                Hapus
+              </button>
+
             </div>
 
-            <button
-              onClick={() => handleDelete(event.id)}
-              className="bg-red-600 px-4 py-1.5 rounded hover:bg-red-700 transition"
-            >
-              Hapus
-            </button>
+          ))
 
-          </div>
+        ) : (
 
-        ))}
+          <p className="text-gray-400">
+            Belum ada event
+          </p>
+
+        )}
 
       </div>
 

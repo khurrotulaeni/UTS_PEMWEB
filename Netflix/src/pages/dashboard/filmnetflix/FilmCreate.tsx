@@ -13,9 +13,11 @@ export default function FilmCreate() {
 
   const [name, setName] = useState("");
   const [role, setRole] = useState("");
+
+  // URL GAMBAR
   const [foto, setFoto] = useState("");
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = async (e: any) => {
 
     e.preventDefault();
 
@@ -27,16 +29,45 @@ export default function FilmCreate() {
 
     }
 
-    addMovie({
-      id: Date.now(),
+    // DATA MOVIE
+    const movieData = {
       name,
       role,
       foto,
-    });
+    };
 
-    alert("Film berhasil ditambahkan!");
+    try {
 
-    navigate("/dashboard/filmnetflix");
+      // KIRIM KE BACKEND
+      const response = await fetch(
+        "http://localhost:3000/movies",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(movieData),
+        }
+      );
+
+      const data = await response.json();
+
+      // MASUKKAN KE ZUSTAND
+      addMovie(data);
+
+      alert("Film berhasil ditambahkan!");
+
+      navigate("/dashboard/filmnetflix");
+
+    } catch (error) {
+
+      console.log(
+        "Gagal tambah film",
+        error
+      );
+
+    }
+
   };
 
   return (
@@ -61,7 +92,9 @@ export default function FilmCreate() {
             type="text"
             placeholder="Contoh: Avengers"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) =>
+              setName(e.target.value)
+            }
             className="w-full p-3 rounded bg-zinc-800 border border-zinc-700 outline-none"
           />
 
@@ -77,7 +110,9 @@ export default function FilmCreate() {
             type="text"
             placeholder="Contoh: Action"
             value={role}
-            onChange={(e) => setRole(e.target.value)}
+            onChange={(e) =>
+              setRole(e.target.value)
+            }
             className="w-full p-3 rounded bg-zinc-800 border border-zinc-700 outline-none"
           />
 
@@ -91,9 +126,11 @@ export default function FilmCreate() {
 
           <input
             type="text"
-            placeholder="Masukkan link gambar"
+            placeholder="https://..."
             value={foto}
-            onChange={(e) => setFoto(e.target.value)}
+            onChange={(e) =>
+              setFoto(e.target.value)
+            }
             className="w-full p-3 rounded bg-zinc-800 border border-zinc-700 outline-none"
           />
 
