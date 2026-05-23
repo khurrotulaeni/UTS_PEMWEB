@@ -1,38 +1,39 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useEventStore } from "../../../store/useEventStore"; 
+import { useEventStore } from "../../../store/useEventStore";
 
 export default function EventCreate() {
   const navigate = useNavigate();
-  
-  const addEvent = useEventStore((state) => state.addEvent);
 
-  const [name, setName] = useState("");
-  const [date, setDate] = useState("");
+  const [title, setTitle] = useState(""); 
+  const [dateEvent, setDateEvent] = useState("");
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
+  const [categoryId, setCategoryId] = useState("");
+  const [pembicaraId, setPembicaraId] = useState("");
 
-  function handleSubmit(e: React.FormEvent) {
+  const addEvent = useEventStore((state) => state.addEvent);
+
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    const newEvent = {
-      id: Date.now(),
-      name,
-      // Jika di interface useEventStore milik Princess butuh date, location, dll, biarkan seperti ini
-      date,
-      location,
-      description,
-    };
+    try {
+      await addEvent({
+        title,
+        dateEvent,
+        location,
+        description,
+        categoryId: Number(categoryId),
+        pembicaraId: Number(pembicaraId),
+      });
 
-    // 3. Masukkan data ke Zustand Store agar angka di Dashboard otomatis bertambah!
-    addEvent(newEvent);
+      alert("Event berhasil ditambahkan!");
 
-    // KODE LOCALSTORAGE (Tetap dipertahankan jika Princess masih butuh backup di localStorage)
-    const oldEvents = JSON.parse(localStorage.getItem("events") || "[]");
-    const updatedEvents = [...oldEvents, newEvent];
-    localStorage.setItem("events", JSON.stringify(updatedEvents));
+      navigate("/dashboard/event");
 
-    navigate("/dashboard/event");
+    } catch (error) {
+      console.log("Gagal tambah event", error);
+    }
   }
 
   return (
@@ -40,19 +41,19 @@ export default function EventCreate() {
       <h1 className="text-3xl font-bold mb-6">Tambah Event</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4 max-w-md">
+
         <input
           type="text"
           placeholder="Nama Event"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
           className="w-full p-3 rounded bg-zinc-800"
         />
 
         <input
-          type="text"
-          placeholder="Tanggal"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
+          type="date"
+          value={dateEvent}
+          onChange={(e) => setDateEvent(e.target.value)}
           className="w-full p-3 rounded bg-zinc-800"
         />
 
@@ -71,12 +72,29 @@ export default function EventCreate() {
           className="w-full p-3 rounded bg-zinc-800"
         />
 
+        <input
+          type="number"
+          placeholder="Category ID"
+          value={categoryId}
+          onChange={(e) => setCategoryId(e.target.value)}
+          className="w-full p-3 rounded bg-zinc-800"
+        />
+
+        <input
+          type="number"
+          placeholder="Pembicara ID"
+          value={pembicaraId}
+          onChange={(e) => setPembicaraId(e.target.value)}
+          className="w-full p-3 rounded bg-zinc-800"
+        />
+
         <button
           type="submit"
           className="bg-red-600 px-4 py-2 rounded-lg hover:bg-red-700"
         >
           Simpan
         </button>
+
       </form>
     </div>
   );

@@ -1,43 +1,43 @@
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
 
-import { useMovieStore } from "../../../store/useMovieStore";
+import { usePembicaraStore } from "../../../store/usePembicaraStore";
 
-export default function FilmIndex() {
+export default function PembicaraIndex() {
 
-  const movies = useMovieStore(
-    (state: any) => state.movies
+  const pembicara = usePembicaraStore(
+    (state: any) => state.pembicara
   );
 
-  const setMovies = useMovieStore(
-    (state: any) => state.setMovies
+  const setPembicara = usePembicaraStore(
+    (state: any) => state.setPembicara
   );
 
-  const removeMovie = useMovieStore(
-    (state: any) => state.removeMovie
+  const removePembicara = usePembicaraStore(
+    (state: any) => state.removePembicara
   );
 
-  // FETCH MOVIES DARI BACKEND
+  // FETCH PEMBICARA
   useEffect(() => {
 
-    const fetchMovies = async () => {
+    const fetchPembicara = async () => {
 
       try {
 
         const response = await fetch(
-          "http://localhost:3000/movies"
+          "http://localhost:3000/pembicara"
         );
 
         const data = await response.json();
 
         console.log(data);
 
-        setMovies(data);
+        setPembicara(data);
 
       } catch (error) {
 
         console.log(
-          "Gagal fetch movies",
+          "Gagal fetch pembicara",
           error
         );
 
@@ -45,28 +45,28 @@ export default function FilmIndex() {
 
     };
 
-    fetchMovies();
+    fetchPembicara();
 
   }, []);
 
-  // DELETE MOVIE
+  // DELETE PEMBICARA
   const handleDelete = async (id: number) => {
 
     try {
 
       await fetch(
-        `http://localhost:3000/movies/${id}`,
+        `http://localhost:3000/pembicara/${id}`,
         {
           method: "DELETE",
         }
       );
 
-      removeMovie(id);
+      removePembicara(id);
 
     } catch (error) {
 
       console.log(
-        "Gagal hapus movie",
+        "Gagal hapus pembicara",
         error
       );
 
@@ -80,56 +80,55 @@ export default function FilmIndex() {
       <div className="flex justify-between items-center mb-8">
 
         <h1 className="text-3xl font-bold">
-          Movies
+          Pembicara
         </h1>
 
         <Link
-          to="/dashboard/filmnetflix/create"
+          to="/dashboard/pembicara/create"
           className="bg-red-600 px-4 py-2 rounded-lg hover:bg-red-700"
         >
-          + Tambah Film
+          + Tambah Pembicara
         </Link>
 
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
 
-        {movies.length > 0 ? (
+        {pembicara.length > 0 ? (
 
-          movies.map((movie: any) => {
-
-            console.log(movie.foto);
+          pembicara.map((item: any) => {
 
             return (
 
               <div
-                key={movie.id}
-                className="bg-zinc-900 rounded-lg overflow-hidden"
+                key={item.id}
+                className="bg-zinc-900 rounded-xl overflow-hidden hover:scale-105 transition"
               >
 
                 <img
                   src={
-                    movie.foto ||
-                    "https://upload.wikimedia.org/wikipedia/en/f/f9/TheAvengers2012Poster.jpg"
+                    item.image ||
+                    "https://i.pravatar.cc/300"
                   }
-                  alt={movie.name}
+                  alt={item.name}
                   className="w-full h-72 object-cover"
                 />
 
                 <div className="p-4">
 
                   <h2 className="text-lg font-semibold">
-                    {movie.name}
+                    {item.name}
                   </h2>
 
                   <p className="text-gray-400 text-sm mt-1">
-                    {movie.role}
+                    {item.role}
                   </p>
 
-                  <div className="flex gap-2 mt-3">
+                  {/* BUTTON */}
+                  <div className="flex gap-2 mt-4">
 
                     <Link
-                      to={`/dashboard/filmnetflix/edit/${movie.id}`}
+                      to={`/dashboard/pembicara/edit/${item.id}`}
                       className="bg-yellow-500 px-3 py-1 rounded hover:bg-yellow-600"
                     >
                       Edit
@@ -137,7 +136,7 @@ export default function FilmIndex() {
 
                     <button
                       onClick={() =>
-                        handleDelete(movie.id)
+                        handleDelete(item.id)
                       }
                       className="bg-red-600 px-3 py-1 rounded hover:bg-red-700"
                     >
@@ -157,7 +156,7 @@ export default function FilmIndex() {
         ) : (
 
           <p className="text-gray-400">
-            Belum ada film
+            Belum ada pembicara
           </p>
 
         )}

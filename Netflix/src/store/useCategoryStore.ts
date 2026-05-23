@@ -4,51 +4,61 @@ import { persist } from "zustand/middleware";
 interface Category {
   id: number;
   name: string;
+  createdAt?: string;
 }
 
 interface CategoryState {
-
   categories: Category[];
 
   setCategories: (data: Category[]) => void;
-
-  addCategory: (category: Category) => void;
-
-  removeCategory: (id: number) => void;
-
+  fetchCategories: () => Promise<void>;
+  addCategory: (name: string) => Promise<void>;
+  removeCategory: (id: number) => Promise<void>;
 }
 
-export const useCategoryStore =
-  create<CategoryState>()(
-    persist(
-      (set) => ({
+export const useCategoryStore = create<CategoryState>()(
+  persist(
+    (set, get) => ({
+      categories: [],
 
-        categories: [],
+      // SET MANUAL
+      setCategories: (data) => set({ categories: data }),
 
-        setCategories: (data) =>
-          set({
-            categories: data,
-          }),
+      // GET DATA
+      fetchCategories: async () => {
+        const res = await fetch("http://localhost:3000/categories");
+        const data = await res.json();
+        set({ categories: data });
+      },
 
-        addCategory: (category) =>
-          set((state) => ({
-            categories: [
-              ...state.categories,
-              category,
-            ],
-          })),
+      // ADD CATEGORY
+      addCategory: async (name) => {
+        await fetch("http://localhost:3000/categories", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ name }),
+        });
 
-        removeCategory: (id) =>
-          set((state) => ({
-            categories:
-              state.categories.filter(
-                (cat) => cat.id !== id
-              ),
-          })),
+        // refresh otomatis
+        get().fetchCategories();
+      },
 
-      }),
-      {
-        name: "category-storage",
-      }
-    )
-  );
+      // DELETE CATEGORY
+      removeCategory: async (id) => {
+        await fetch(
+          `http://localhost:3000/categories/${id}`,
+          {
+            method: "DELETE",
+          }
+        );
+
+        get().fetchCategories();
+      },
+    }),
+    {
+      name: "category-storage",
+    }
+  )
+);

@@ -20,8 +20,14 @@ import FilmIndex from "./pages/dashboard/filmnetflix/FilmIndex";
 import FilmCreate from "./pages/dashboard/filmnetflix/FilmCreate";
 import FilmEdit from "./pages/dashboard/filmnetflix/FillmEdit";
 import CategoryIndex from "./pages/dashboard/category/CategoryIndex";
+import CategoryEdit from "./pages/dashboard/category/CategoryEdit";
 import EventIndex from "./pages/dashboard/event/EventIndex";
 import EventCreate from "./pages/dashboard/event/EventCreate";
+import EventEdit from "./pages/dashboard/event/EventEdit";
+import PembicaraIndex from "./pages/dashboard/pembicara/PembicaraIndex";
+import PembicaraCreate from "./pages/dashboard/pembicara/pembicaraCreate";
+import PembicaraEdit from "./pages/dashboard/pembicara/PembicaraEdit";
+import Biodata from "./pages/dashboard/biodata/Biodata";
 
 function App() {
   return (
@@ -66,6 +72,11 @@ function App() {
           />
 
           <Route
+            path="/dashboard/category/edit/:id"
+            element={<CategoryEdit />}
+          />
+          
+          <Route
             path="/dashboard/filmnetflix"
             element={<FilmIndex />}
           />
@@ -84,8 +95,29 @@ function App() {
             element={<EventIndex />}
           />
           <Route
+            path="/dashboard/event/edit/:id"
+            element={<EventEdit />}
+          />
+          <Route
             path="/dashboard/event/create"
             element={<EventCreate />}
+          />
+
+          <Route
+            path="/dashboard/pembicara"
+            element={<PembicaraIndex />}
+          />
+          <Route
+            path="/dashboard/pembicara/create"
+            element={<PembicaraCreate />}
+          />
+          <Route
+            path="/dashboard/pembicara/edit/:id"
+            element={<PembicaraEdit />}
+          />
+          <Route
+            path="/dashboard/biodata"
+            element={<Biodata />}
           />
         </Route>
       </Route>
