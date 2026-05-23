@@ -80,7 +80,7 @@ export const showPembicara = async (req: Request, res: Response) => {
 export const updatePembicara = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { name, bidang, bio } = req.body;
+    const { name, role, image } = req.body;
 
     const updatedPembicara = await prisma.pembicara.update({
       where: {
@@ -88,8 +88,8 @@ export const updatePembicara = async (req: Request, res: Response) => {
       },
       data: {
         name,
-        bidang,
-        bio,
+        role,
+        image,
       },
     });
 
